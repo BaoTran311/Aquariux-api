@@ -1,0 +1,10 @@
+allure-python-commons
+pytest
+requests
+jsonschema
+colorlog
+allure-pytest
+pycryptodome
+pyyaml
+pytest-check
+colorama
