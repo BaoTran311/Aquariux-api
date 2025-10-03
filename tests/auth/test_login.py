@@ -1,12 +1,11 @@
 from src.data_runtime import DataRuntime
-from src.routes.auth.auth_client import AuthClient
 from src.utils import Dotdict
 from src.utils.logger_utils import logger
 
-sv = AuthClient.company_login
 
 
-def test_positive_valid_credential():
+def test_positive_valid_credential(auth_client):
+    sv = auth_client.company_login
     expect_user = {
         "source": "WEB",
         "isDemo": False,

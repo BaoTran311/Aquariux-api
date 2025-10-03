@@ -1,25 +1,36 @@
 from src.core.request import XRequest
 from src.data_runtime import DataRuntime
-from src.routes.base_api import BaseAPI
+from src.utils import Dotdict
 
 
-class CompanyLogin(BaseAPI):
-    def __init__(self):
-        super().__init__()
+class CompanyLogin:
+    def __init__(self, headers=None):
+        self.request = XRequest(headers)
         self.url = "/api/auth/v1/company/login"
 
     ### payload ###
-    def required_payload(self, user_id, password, source):  # noqa
+    def required_payload(self, user_id, password, source="WEB"):  # noqa
         return dict(
-            source=source or "WEB",
+            source=source.upper(),
             userId=user_id or DataRuntime.config.email,
             password=password or DataRuntime.config.password
         )
 
     ### method ###
-    def post(self, payload, *, attach=True):
-        resp = self.request.post(self.url, payload, attach=attach)
+    def post(self, payload, **kwargs):
+        resp = self.request.post(self.url, payload, **kwargs)
         return resp
+
+    def authenticate(self, user_id=None, password=None, source="WEB"):
+        resp = self.post(self.required_payload(
+            user_id or DataRuntime.config.email, password or DataRuntime.config.password, source),
+            attach=False)
+        assert resp.status_code == 200, f"Authentication failed with status code {resp.status_code}!!!"
+
+        resp_data = Dotdict(resp.json())
+        self.request.headers |= dict(userId=user_id, authorization=f"Bearer {resp_data.result.token}")
+        return self.request.headers
+
 
     ### schema ###
     @property
