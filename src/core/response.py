@@ -7,7 +7,6 @@ from contextlib import suppress
 from json import JSONDecodeError
 
 import jsonschema
-from requests import Response
 
 from src.consts import PASSED_ICON, FAILED_ICON
 from src.utils.assert_utils import soft_assert, assert_log
@@ -16,7 +15,6 @@ from src.utils.logger_utils import logger
 
 class XResponse:
     def __init__(self, resp):
-        super().__init__()
         self._resp = resp
 
     def json(self, **kwargs):

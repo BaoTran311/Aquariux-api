@@ -24,8 +24,8 @@ def __catcherror__(func):
 
 
 class XRequest:
-    def __init__(self):
-        self.headers = {}
+    def __init__(self, headers=None):
+        self.headers = headers or {}
         self.endpoint = DataRuntime.config.url[DataRuntime.option.client]
 
     @property
@@ -38,30 +38,25 @@ class XRequest:
 
     @__catcherror__
     def get(self, url: str, query_param=None, **kwargs):
-        params = {
-            "headers": kwargs.get("headers") or self.headers,
-            "params": query_param,
-            **kwargs
-        }
-        resp = XResponse(requests.get(url=f"{self.endpoint}{url}", **params))
+        resp = XResponse(requests.get(headers=self.headers, url=f"{self.endpoint}{url}", params=query_param, **kwargs))
         return resp
 
     @__catcherror__
     def post(self, url: str, payload, **kwargs):
-        resp = XResponse(requests.post(url=f"{self.endpoint}{url}", json=payload, **kwargs))
+        resp = XResponse(requests.post(headers=self.headers, url=f"{self.endpoint}{url}", json=payload, **kwargs))
         return resp
 
     @__catcherror__
     def put(self, url: str, payload, **kwargs):
-        resp = XResponse(requests.put(url=f"{self.endpoint}{url}", json=payload, **kwargs))
+        resp = XResponse(requests.put(headers=self.headers, url=f"{self.endpoint}{url}", json=payload, **kwargs))
         return resp
 
     @__catcherror__
     def patch(self, url: str, payload, **kwargs):
-        resp = XResponse(requests.patch(url=f"{self.endpoint}{url}", json=payload, **kwargs))
+        resp = XResponse(requests.patch(headers=self.headers, url=f"{self.endpoint}{url}", json=payload, **kwargs))
         return resp
 
     @__catcherror__
     def delete(self, url: str, query_param=None, **kwargs):
-        resp = XResponse(requests.delete(url=f"{self.endpoint}{url}", params=query_param, **kwargs))
+        resp = XResponse(requests.delete(headers=self.headers, url=f"{self.endpoint}{url}", params=query_param, **kwargs))
         return resp

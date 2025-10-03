@@ -138,7 +138,10 @@ def patch_request(request):
         def wrapper(*args, **kwargs):
             __tracebackhide__ = True
 
-            request_time = not kwargs.pop("attach") or get_current_time()
+            request_time = get_current_time()
+            with suppress(KeyError):
+                if not kwargs.pop("attach"):
+                    request_time = None
             result = XResponse(f(*args, **kwargs))
             logger.debug(format_request_response(result))
 
