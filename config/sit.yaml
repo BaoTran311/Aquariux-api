@@ -1,16 +1,34 @@
 
+password_crm: QXV0b0AxMjM0NQ==
+password_live: QXV0b3Rlc3RAMTIzNDU=
+password_demo: QXV0b3Rlc3RAMTIzNDU=
+password_admin: YWRtaW4=
 
-url:
-  lirunex: https://lirunex-global-mb.webtrader-sit.s20ip12.com
-  transactCloud: https://transactcloudmt5-mb.webtrader-sit.s20ip12.com
+lirunex:
+  url: https://lirunex-global-mb.webtrader-sit.s20ip12.com
+  bo_url: https://lirunex-backoffice.webtrader-sit.s20ip12.com/backoffice
 
-# Credential
-# ----------
-user_id: 569205553
-email: mt5_automation58@mailinator.com
-password: QXV0b0AxMjM0NQ==
-#password: Autotest@12345
-#password: Giabao123
+  credentials:
+    admin:
+      user: admin
+
+    mt4:
+      user_crm: mt4_automation40@mailinator.com
+      user_demo: 2092010247
 
 
+    mt5:
+      user_crm: mt5_automation45@mailinator.com
+      user_demo: 569205536
 
+transactCloud:
+  url: https://transactcloudmt5-mb.webtrader-sit.s20ip12.com
+  bo_url: https://transactcloudmt5-backoffice.webtrader-sit.s20ip12.com/backoffice
+
+  credentials:
+    admin:
+      user: admin
+
+    mt5:
+      user_live: 998771
+      user_demo: 998771
