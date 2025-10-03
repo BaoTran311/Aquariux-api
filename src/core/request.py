@@ -19,6 +19,7 @@ def __catcherror__(func):
             logger.warning("=" * 32)
             logger.warning(f"| Name    : {type(error).__name__}")
             logger.warning(f"| Error   : {error}")
+            return None
 
     return wrapper
 
@@ -26,7 +27,7 @@ def __catcherror__(func):
 class XRequest:
     def __init__(self, headers=None):
         self.headers = headers or {}
-        self.endpoint = DataRuntime.config.url[DataRuntime.option.client]
+        self.endpoint = DataRuntime.config.url
 
     @property
     def headers(self):

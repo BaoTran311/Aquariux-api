@@ -1,12 +1,9 @@
 import base64
 import binascii
 import functools
-import json
 import logging
-import textwrap
 import time
 from contextlib import suppress
-from pathlib import Path
 
 import allure
 import pytest
@@ -29,7 +26,12 @@ def pytest_addoption(parser):
     general = parser.getgroup("General")
     general.addoption("--debuglog", action="store_true", default=False)
     parser.addoption("--env", default="sit", help="Environment to run tests (sit, release_sit, uat)")
-    parser.addoption("--client", default="lirunex", help="Client to test (lirunex, transactCloud) - single value only")
+    parser.addoption("--client", default="lirunex", help="Client to run test (lirunex, transactCloud) - single value only")
+    parser.addoption("--account", default="demo", choices=["live", "demo", "crm"], help="Account type to run test (lirunex: crm/ demo, transactCloud: live/ demo)")
+    parser.addoption("--server", default="mt5", choices=["mt4", "mt5"], help="Server to run test on")
+    parser.addoption("--user", help="Custom user used to run test")
+    parser.addoption("--password", help="Raw custom password")
+    parser.addoption("--url", help="Custom url for running external tenant")
 
 
 def pytest_sessionstart(session):
@@ -41,12 +43,29 @@ def pytest_sessionstart(session):
     if runtime_option["collectonly"]:  # count the total number of tests and then exit
         return
 
+    # parse run test options
+    client = runtime_option["client"]
+    account_type = runtime_option["account"]
+    server = runtime_option["server"]
+    user = runtime_option["user"]
+    password = runtime_option["password"]
+    url = runtime_option["url"]
+
+    # load env config file
     with open(consts.ENV_DIR / f"{runtime_option['env']}.yaml", "r") as _env:
         DataRuntime.config = Dotdict(yaml.load(_env, Loader=yaml.FullLoader))
+
+    # load runtime option
     DataRuntime.option = Dotdict(runtime_option)
 
+    # decode internal password
     with suppress(binascii.Error):
-        DataRuntime.config.password = base64.b64decode(DataRuntime.config.password).decode()
+        DataRuntime.config[f"password_{account_type}"] = base64.b64decode(DataRuntime.config[f"password_{account_type}"]).decode()
+
+    # assign config with runtime options
+    DataRuntime.config.user = user or DataRuntime.config[client].credentials[server][f"user_{account_type}"]
+    DataRuntime.config.password = password or DataRuntime.config[f"password_{account_type}"]
+    DataRuntime.config.url = url or DataRuntime.config[client].url
 
     if runtime_option["debuglog"]:  # switch log level to debug
         setup_logging(logging.DEBUG)

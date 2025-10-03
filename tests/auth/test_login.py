@@ -13,9 +13,10 @@ def test_positive_valid_credential(auth_client):
         "mainProductCode": "METATRADER5",
         "omsServerId": "lirunex-oms-2"
     }
-    logger.info(f"- Step 1: POST {sv.url!r}")
+
+    logger.info(f"- Step 1: POST {sv.url!r} login")
     payload = Dotdict(sv.required_payload(
-        DataRuntime.config.email, DataRuntime.config.password, "WEB",
+        DataRuntime.config.user, DataRuntime.config.password, "WEB",
     ))
     resp = sv.post(payload)
     resp.check_jsonschema(sv.schema)
