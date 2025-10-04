@@ -1,3 +1,4 @@
+import hashlib
 import json
 import os
 import re
@@ -8,6 +9,7 @@ from pathlib import Path
 import allure
 
 from src.core.response import XResponse
+from src.data_runtime import DataRuntime
 from src.utils.json_utils import truncate_json, extract_json_objects
 
 line_spacing_info = "margin: 0 0 0.5em 0;"
@@ -107,6 +109,19 @@ def format_request_response(resp: XResponse):
     return f"{req}{'\n' * 2}{resp}"
 
 
+def __generate_history_id__(full_name: str, parameters):
+    """Generate Allure historyId based on result.json content."""
+    # Check if test case contains parameters
+    if isinstance(parameters, list) and parameters:
+        params_str = ''.join(f"{p.get('name')}={p.get('value')}" for p in parameters)
+    else:
+        params_str = ""
+
+    # Generate hash md5
+    raw = f"{full_name}{params_str}{DataRuntime.option.client}{DataRuntime.option.server}"
+    return hashlib.md5(raw.encode("utf-8")).hexdigest()
+
+
 def custom_allure_result(allure_dir):
     for result_file in Path(allure_dir).glob("*-result.json"):
         with result_file.open("r", encoding="utf8") as _rf:
@@ -114,21 +129,14 @@ def custom_allure_result(allure_dir):
             with suppress(JSONDecodeError):
                 json_obj = json.load(_rf)
 
+                json_obj['historyId'] = __generate_history_id__(json_obj['fullName'], json_obj.get('parameters'))
+
                 # Remove unnecessary labels
                 raw_labels = json_obj.get("labels", [])
                 json_obj["labels"] = [
                     _label for _label in raw_labels
-                    if _label.get('name') in ("parentSuite", "suite")
+                    if _label.get('name') in ("parentSuite", "suite", "tag")
                 ]
-
-                # labels - allure report
-                # Present, cook (value, name in parentSuite and Suite)
-                # raw_labels = json_obj.get("labels")
-                # json_obj["labels"] = [
-                #     _label for _label in raw_labels
-                #     if ("parentSuite" == _label.get('name') or "suite" == _label.get('name'))
-                #        and _label.get('value').replace(" ", "").istitle()
-                # ]
 
                 # Write the modified json object
                 with result_file.open("w") as _f:

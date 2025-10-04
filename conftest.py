@@ -73,7 +73,15 @@ def pytest_sessionstart(session):
 
 @pytest.hookimpl(tryfirst=True)
 def pytest_runtest_setup(item: pytest.Item):
+    allure.dynamic.parent_suite(DataRuntime.option.client.upper())
+    allure.dynamic.suite(DataRuntime.option.server.upper())
+
     print("\x00")
+
+
+@pytest.hookimpl(tryfirst=True)
+def pytest_runtest_call(item: pytest.Item):
+    allure.dynamic.tag(f"user: {DataRuntime.config.user}")
 
 
 @pytest.hookimpl(tryfirst=True)
@@ -99,6 +107,19 @@ def pytest_runtest_logreport(report):
         printlog(f"Test case     | {report.nodeid}")  # noqa
         printlog(f"Test duration | {pretty_time(report.duration)}")  # noqa
         printlog("---------------")
+
+
+def pytest_terminal_summary(terminalreporter, exitstatus, config):
+    total = terminalreporter._numcollected
+    passed = len(terminalreporter.stats.get("passed", []))
+    failed = len(terminalreporter.stats.get("failed", []))
+    broken = len(terminalreporter.stats.get("broken", []))
+
+    # terminalreporter.section("Summary")
+    # tw = terminalreporter._tw  # terminal writer
+    # tw.line(f"Total tests: {total}")
+    # tw.line(f"Passed: {passed}", green=True)
+    # tw.line(f"Failed: {failed + broken}", red=True)
 
 
 def pytest_sessionfinish(session):

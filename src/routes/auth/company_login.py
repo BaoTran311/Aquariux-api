@@ -116,7 +116,6 @@ class CompanyLogin:
                                 "tenantId",
                                 "mainProductCode",
                                 "omsServerId",
-                                "key_error"
                             ]
                         }
                     },
