@@ -2,6 +2,7 @@ import base64
 import binascii
 import functools
 import logging
+import re
 import time
 from contextlib import suppress
 
@@ -15,7 +16,7 @@ from src.core.response import XResponse
 from src.data_runtime import DataRuntime
 from src.utils import Dotdict
 from src.utils.allure_utils import custom_log_info, custom_log_warning, delete_container_files, custom_allure_result, attach_request_response, \
-    format_request_response
+    format_request_response, custom_allure_title
 from src.utils.datetime_utils import pretty_time, get_current_time
 from src.utils.logger_utils import setup_logging, logger
 
@@ -73,10 +74,10 @@ def pytest_sessionstart(session):
 
 @pytest.hookimpl(tryfirst=True)
 def pytest_runtest_setup(item: pytest.Item):
+    print("\x00")
     allure.dynamic.parent_suite(DataRuntime.option.client.upper())
     allure.dynamic.suite(DataRuntime.option.server.upper())
-
-    print("\x00")
+    item.name = custom_allure_title(item.name)
 
 
 @pytest.hookimpl(tryfirst=True)
