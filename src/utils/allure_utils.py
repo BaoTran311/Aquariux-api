@@ -122,6 +122,13 @@ def __generate_history_id__(full_name: str, parameters):
     return hashlib.md5(raw.encode("utf-8")).hexdigest()
 
 
+def custom_allure_title(test_case_name):
+    match = re.match(r"^test_(?:(positive|negative|integrate)_)?([A-Z0-9_]+TC\d+)_(.+)$", test_case_name)
+    if match:
+        return f"{match.group(1).capitalize()} - {match.group(2)} {match.group(3).replace("_", " ")}"
+    return test_case_name
+
+
 def custom_allure_result(allure_dir):
     for result_file in Path(allure_dir).glob("*-result.json"):
         with result_file.open("r", encoding="utf8") as _rf:

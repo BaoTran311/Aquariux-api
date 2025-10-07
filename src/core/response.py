@@ -46,6 +46,7 @@ class XResponse:
         )
 
     def check_response_time(self, max_timeout=1):
+        # The units of max_timeout must in second - Ex: 0.3|0.5|1|1.5
         multiple = 10 ** 3
         actual = math.ceil(self.time_in_second * multiple) / multiple
         method = self._resp.request.method
