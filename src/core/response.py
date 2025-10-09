@@ -51,11 +51,13 @@ class XResponse:
         actual = math.ceil(self.time_in_second * multiple) / multiple
         method = self._resp.request.method
         url = self._resp.request.path_url
-        msg = f"Verify response time in seconds ({actual}s < {max_timeout}s) [ {method} {url} ]"
+        # msg = f"Verify response time in seconds ({actual}s < {max_timeout}s) [ {method} {url} ]"
+        msg = f"Verify response time in seconds ({actual}s < {max_timeout}s)"
         time_unit = "s"
         if self.time_in_second < 1:
             max_timeout = 0.5
-            msg = f"Verify response time in milliseconds ({int(actual * 1000)}ms < {int(max_timeout * 1000)}ms) [ {method} {url} ]"
+            # msg = f"Verify response time in milliseconds ({int(actual * 1000)}ms < {int(max_timeout * 1000)}ms) [ {method} {url} ]"
+            msg = f"Verify response time in milliseconds ({int(actual * 1000)}ms < {int(max_timeout * 1000)}ms)"
             time_unit = "ms"
 
         assert_log(

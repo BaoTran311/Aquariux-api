@@ -5,7 +5,7 @@ from src.utils import Dotdict
 from src.utils.logger_utils import logger
 
 
-def test_negative_TRD_MRK_TC001_login_CRM_with_required_params(auth_client):
+def test_negative_AUT_TC001_login_CRM_with_required_params(auth_client):
     sv = auth_client.company_login
     expect_user = {
         "source": "WEB",
@@ -24,6 +24,9 @@ def test_negative_TRD_MRK_TC001_login_CRM_with_required_params(auth_client):
     resp.check_status_code(200)
     resp.check_response_time(1)
     resp.check_payload_equals('200', key="code")
+
+
+    resp.check_payload_equals('WEB', key="code")
     resp.check_payload_equals(payload['userId'], key="result.user.metatraderId")
     resp.check_payload_not_equals(payload['userId'], key="result.user.metatraderId")
     resp.check_payload_contains(expect_user, key="result.user")

@@ -10,3 +10,5 @@ class AccountType(BaseEnum):
     DEMO = "demo"
     LIVE = "live"
     CRM = "crm"
+
+
