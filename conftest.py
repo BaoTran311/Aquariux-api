@@ -2,7 +2,6 @@ import base64
 import binascii
 import functools
 import logging
-import re
 import time
 from contextlib import suppress
 

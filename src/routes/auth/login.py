@@ -5,18 +5,18 @@ from src.enums.system import Clients, AccountType
 from src.utils import Dotdict
 
 
-class CompanyLogin:
+class Login:
     def __new__(cls, headers=None, *args, **kwargs):
         instance = super().__new__(cls)
         url_map = Dotdict({
             Clients.LIRUNEX: {
-                AccountType.CRM: "/api/auth/v1/company/login",
-                AccountType.LIVE: "/api/auth/v2/company/live/login",
-                AccountType.DEMO: "/api/auth/v2/company/demo/login"
+                AccountType.CRM: "/auth/v1/company/login",
+                AccountType.LIVE: "/auth/v2/company/live/login",
+                AccountType.DEMO: "/auth/v2/company/demo/login"
             },
             Clients.TRANSACTCLOUD: {
-                AccountType.LIVE: "/api/auth/v2/metatrader5/live/login",
-                AccountType.DEMO: "/api/auth/v2/metatrader5/demo/login"
+                AccountType.LIVE: "/auth/v2/metatrader5/live/login",
+                AccountType.DEMO: "/auth/v2/metatrader5/demo/login"
             }
         })
 

@@ -123,7 +123,7 @@ def __generate_history_id__(full_name: str, parameters):
 
 
 def custom_allure_title(test_case_name):
-    match = re.match(r"^test_(?:(positive|negative|integrate)_)?([A-Z0-9_]+TC\d+)_(.+)$", test_case_name)
+    match = re.match(r"^test_(?:(positive|negative|integration)_)?([A-Z0-9_]+TC\d+)_(.+)$", test_case_name)
     if match:
         return f"{match.group(1).capitalize()} - {match.group(2)} {match.group(3).replace("_", " ")}"
     return test_case_name
