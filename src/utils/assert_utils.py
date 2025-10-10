@@ -29,9 +29,13 @@ def assert_log(*, actual, expected, msg, result, time_unit=""):
     printlog(f"{icon} {msg}")
 
 
-def __check_data__(actual, expected, message="", op_func=lambda a, b: a == b):
+def __check_data__(actual, expected, message="", op_func=lambda a, b: a == b, method="equals"):
+    if not message:
+        message = f"{actual!r} {method} {expected!r}"
+
     if not message.startswith(("verify", "check")):
         message = f"Verify {message}"
+
     res = op_func(actual, expected)
 
     assert_log(
@@ -42,12 +46,12 @@ def __check_data__(actual, expected, message="", op_func=lambda a, b: a == b):
     )
 
 
-check_equals = partial(__check_data__, op_func=operator.eq)
-check_not_equals = partial(__check_data__, op_func=operator.ne)
-check_greater_than = partial(__check_data__, op_func=operator.gt)
-check_greater_equal = partial(__check_data__, op_func=operator.ge)
-check_less_than = partial(__check_data__, op_func=operator.lt)
-check_less_equal = partial(__check_data__, op_func=operator.le)
-check_contains = partial(__check_data__, op_func=operator.contains)
-check_not_contains = partial(__check_data__, op_func=lambda a, b: b not in a)
+check_equals = partial(__check_data__, op_func=operator.eq, method="equals")
+check_not_equals = partial(__check_data__, op_func=operator.ne, method="not equals")
+check_greater_than = partial(__check_data__, op_func=operator.gt, method="greater than")
+check_greater_equal = partial(__check_data__, op_func=operator.ge, method="greater or equals")
+check_less_than = partial(__check_data__, op_func=operator.lt, method="less than")
+check_less_equal = partial(__check_data__, op_func=operator.le, method="less than or equals")
+check_contains = partial(__check_data__, op_func=operator.contains, method="contains")
+check_not_contains = partial(__check_data__, op_func=lambda a, b: b not in a, method="not contains")
 del __check_data__

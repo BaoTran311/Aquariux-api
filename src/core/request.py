@@ -27,7 +27,7 @@ def __catcherror__(func):
 class XRequest:
     def __init__(self, headers=None):
         self.headers = headers or {}
-        self.endpoint = DataRuntime.config.url
+        self.endpoint = DataRuntime.config.url + "/api"
 
     @property
     def headers(self):

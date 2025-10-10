@@ -5,6 +5,7 @@ import operator
 import re
 from contextlib import suppress
 from json import JSONDecodeError
+from functools import partialmethod
 
 import jsonschema
 
@@ -118,15 +119,15 @@ class XResponse:
         for _msg in printmsg:
             printlog(_msg)
 
-    check_payload_equals = functools.partialmethod(__check_payload__, ops=operator.eq, method="equals")
-    check_payload_not_equals = functools.partialmethod(__check_payload__, ops=operator.ne, method="not equals")
-    check_payload_greater_than = functools.partialmethod(__check_payload__, ops=operator.gt, method="greater than")
-    check_payload_less_than = functools.partialmethod(__check_payload__, ops=operator.lt, method="less than")
-    check_payload_greater_equals = functools.partialmethod(__check_payload__, ops=operator.ge, method="greater or equals")
-    check_payload_less_equals = functools.partialmethod(__check_payload__, ops=operator.le, method="less than or equals")
-    check_payload_endswith = functools.partialmethod(__check_payload__, ops=lambda a, b: a.endswith(b), method="end with")
-    check_payload_contains = functools.partialmethod(__check_payload__, ops=operator.contains, method="contains")
-    check_payload_not_contains = functools.partialmethod(__check_payload__, ops=lambda a, b: b not in a, method="not contains")
+    check_payload_equals = partialmethod(__check_payload__, ops=operator.eq, method="equals")
+    check_payload_not_equals = partialmethod(__check_payload__, ops=operator.ne, method="not equals")
+    check_payload_greater_than = partialmethod(__check_payload__, ops=operator.gt, method="greater than")
+    check_payload_less_than = partialmethod(__check_payload__, ops=operator.lt, method="less than")
+    check_payload_greater_equals = partialmethod(__check_payload__, ops=operator.ge, method="greater or equals")
+    check_payload_less_equals = partialmethod(__check_payload__, ops=operator.le, method="less than or equals")
+    check_payload_endswith = partialmethod(__check_payload__, ops=lambda a, b: a.endswith(b), method="end with")
+    check_payload_contains = partialmethod(__check_payload__, ops=operator.contains, method="contains")
+    check_payload_not_contains = partialmethod(__check_payload__, ops=lambda a, b: b not in a, method="not contains")
     del __check_payload__
 
     def cash_request_to_curl(self):
