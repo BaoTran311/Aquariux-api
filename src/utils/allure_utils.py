@@ -142,9 +142,20 @@ def custom_allure_result(allure_dir):
                 raw_labels = json_obj.get("labels", [])
                 json_obj["labels"] = [
                     _label for _label in raw_labels
-                    if _label.get('name') in ("parentSuite", "suite", "tag")
+                    if _label.get('name') in ("parentSuite", "suite", "subSuite", "tag")
                 ]
 
                 # Write the modified json object
                 with result_file.open("w") as _f:
                     json.dump(json_obj, _f)
+
+
+def attach_environment_properties(allure_dir):
+    env_data = {
+        "Environment": DataRuntime.option.env.capitalize(),
+        "Account": "Live/Crm" if DataRuntime.option.account != "demo" else DataRuntime.option.account.capitalize(),
+    }
+
+    with open(f"{allure_dir}/environment.properties", "w") as f:
+        for key, value in env_data.items():
+            f.write(f"{key}={value}\n")
