@@ -25,7 +25,7 @@
     - Missing authenticate in headers
     - Using another authenticate
     - ...
-  - Integrate: check multiple APIs combine
+  - Integration: check multiple APIs combine
   
     Ex: 
     - 1/ GET /symbol
