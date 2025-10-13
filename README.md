@@ -1,107 +1,162 @@
-## Framework Architecture
-- src/core/: Request/Response handling
+## Prerequisites
 
-- src/routes/: API clients (auth, market, trade)
+* __Python 3.10 or above__ installed
+* __NodeJS__ installed
+* __Allure CLI__ installed
 
-- src/utils/: Helper functions and logging
-
-- tests/: Test organization structure
-
-
-## How to develop test script
-- Test Naming Convention: 
-  - **test_type** → indicates the test category  
-    (should be one of the values `positive`, `negative`, `integrate`)  
-  - **TC_id** → unique test case identifier  
-    (e.g., `AUT_TC001`, `TRD_MRK_TC002`)  
-  - **test_scenario** → short description of what the test does  
-    (e.g., `login_with_valid_CRM_credentials`)  
-  - **test_positive_TRD_MRK_TC001_login_with_valid_CRM_credentials**
-- Test Coverage
-  - Positive: valid payload/params validation
-  
-    Ex:
-    - Required params
-    - Full params (required + optional)
-    - Redundant params
-    - ...
-  - Negative: invalid payload/ params
-    
-    Ex:
-    - Missing required params
-    - Wrong data type of params
-    - Missing authenticate in headers
-    - Using another authenticate
-    - ...
-  - Integrate: check multiple APIs combine
-  
-    Ex: 
-    - 1/ GET /symbol
-    - 2/ POST /trade/order
-    - 3/ GET /trade/order/detail -> to verify create success
-    - 4/ UPDATE /trade/order
-    - 5/ GET /trade/order/detail -> to verify update success
-    - 6/ DELETE /trade/order
-    - 7/ GET /trade/order/detail -> to verify delete success
-- Mandatory Checkpoints
-  - `resp.check_status_code(<expected status code>)` → (e.g., `resp.check_status_code(200)`)
-  - `resp.check_response_time(<expected response time>)` → (e.g., `resp.check_response_time(0.5)`)
-  - `resp.check_jsonschema(<expected schema>)` → (e.g., `resp.check_jsonschema(schema)`)
-- Payload Validation Methods
-  
-  Example response payload 
-    ```json
-      {
-        "code": "200",
-        "result": {
-          "token": "eyJhbGciOiJIUzUxMiJ9.eyJyb2xlIjpbIlJPTEVfVVNFUiJdLCJsb2dpblRpbWUiOjE3NTk4NDk2NDAxNjYsIm1ldGF0cmFkZXJJZCI6IjIwOTIwMDk2MzIiLCJ0ZW5hbnRJZCI6ImxpcnVuZXgiLCJvbXNTZXJ2ZXJJZCI6ImxpcnVuZXgiLCJzb3VyY2UiOiJXRUIiLCJ0eXBlIjoiTUVNQkVSIiwidXNlcklkIjoiREVNTy0yMDkyMDA5NjMyIiwic3ViIjoiREVNTy0yMDkyMDA5NjMyIiwiaWF0IjoxNzU5ODQ5NjQwLCJleHAiOjE3NjI0NDE2NDB9.ffaMKSmtdwXZWwH0H1AvgXiPgtJoZCMZ2k9uMQr_9ox3pMAz6HW9R25FeC57CuGL0Manc78l8AqhVMRLJhDy6Q",
-             "user": {
-               "source": "WEB",
-               "metatraderId": "2092009632",
-               "metatraderGroup": "demoLxStd",
-               "isDemo": true,
-               "traderSubcription": "lirunex|DEMO|demoLxStd",
-               "marketSubcription": "lirunex|DEMO|2092009632",
-               "traderSubscription": "lirunex|DEMO|demoLxStd",
-               "marketSubscription": "lirunex|DEMO|2092009632",
-               "tenantId": "lirunex",
-               "mainProductCode": "METATRADER4",
-               "omsServerId": "lirunex"
-          }
-        }
-      }
+    ```shell script
+    npm i allure-commandline -g
     ```
-  `resp.check_payload_equals('200', key="code")`
 
-  `resp.check_payload_equals('WEB', key="result.token.user.source")`
+## Setup
 
-## What is JSON Schema (Important)
-  - JSON Schema that describes the structure of JSON data — it defines:
-    - Which fields the data must include
-    - The data type of each field (string, number, boolean, etc.), and
-    - The validation rules that apply to those fields.
-  - Ex:
-    
-    Response data json 
-      ```json{
-      {
-          "id": 123,
-          "name": "Bao Tran",
-          "email": "bao@example.com",
-          "is_active": true
-      }
-      ```
-    Json schema
-      ```json
-        {
-          "type": "object",
-          "properties": {
-            "id": { "type": "integer" },
-            "name": { "type": "string" },
-            "email": { "type": "string", "format": "email" },
-            "is_active": { "type": "boolean" }
-          },
-          "required": ["id", "name", "email"]
-        }
-      ```
-   - [Link generate json schema](https://transform.tools/json-to-json-schema)
+* Create and activate a virtual environment
+    ```shell script
+    python -m venv .venv
+    # On Windows
+    .venv\Scripts\activate
+    # On Unix or MacOS
+    source .venv/bin/activate
+    ```
+
+* Install necessary libraries
+
+    ```shell script
+    pip3 install -r requirements.txt
+    ```
+
+## How to run test cases
+
+### Basic Commands
+
+```shell script
+# Run all tests
+pytest
+
+# Run specific test file
+pytest tests/auth/test_login.py
+
+# Run specific test function
+pytest tests/auth/test_login.py::test_positive_AUT_TC001_login_with_valid_credentials
+```
+
+### Test Filtering
+```bash
+# Filter by test type
+pytest -k "positive"     # Run positive tests only
+pytest -k "negative"     # Run negative tests only
+pytest -k "integration"    # Run integration tests only
+
+# Filter by test case ID
+pytest -k "AUT_TC001"    # Run specific test case
+pytest -k "TRD_MRK"      # Run trade market related tests
+
+# Filter by test module
+pytest tests/auth/       # Authentication tests
+pytest tests/trade/      # Trading tests
+pytest tests/market/     # Market data tests
+pytest tests/user/       # User management tests
+```
+
+
+### Common Usage Examples
+```bash
+# Run auth tests on demo account with debug
+pytest tests/auth/ --account=demo --debuglog
+
+# Run all positive tests for lirunex MT5
+pytest -k "positive" --client=lirunex --server=mt5 --debuglog
+
+# Run integration tests with custom user
+pytest -k "integration" --user=testuser --password=testpass --debuglog
+
+# Run specific test case with allure report
+pytest -k "AUT_TC001" --alluredir=allure-results --debuglog
+```
+
+## Framework Structure
+
+```
+Aquariux-api/
+├── config/                    # Environment configurations
+│   └── sit.yaml               # SIT environment settings
+├── src/                       # Source code
+│   ├── core/                  # Core framework components
+│   │   ├── request.py         # HTTP request handling
+│   │   └── response.py        # Response validation methods
+│   ├── enums/                 # Enumeration constants
+│   │   ├── system.py          # System-related enums
+│   │   └── trade.py           # Trading-related enums
+│   ├── routes/                # API client implementations
+│   │   ├── auth/              # Authentication APIs
+│   │   │   ├── auth_client.py
+│   │   │   └── login.py
+│   │   ├── market/            # Market data APIs
+│   │   └── trade/             # Trading APIs
+│   │       ├── market.py
+│   │       ├── order.py
+│   │       ├── pending.py
+│   │       └── trade_client.py
+│   ├── utils/                 # Utility functions
+│   │   ├── allure_utils.py    # Allure reporting helpers
+│   │   ├── assert_utils.py    # Custom assertion methods
+│   │   ├── datetime_utils.py  # Date/time utilities
+│   │   ├── json_utils.py      # JSON processing helpers
+│   │   ├── logger_utils.py    # Logging configuration
+│   │   └── trading_utils.py   # Trading-specific utilities
+│   ├── consts.py              # Framework constants
+│   └── data_runtime.py        # Runtime data management
+├── tests/                     # Test cases
+│   ├── auth/                  # Authentication tests
+│   │   ├── conftest.py        # Auth-specific fixtures
+│   │   └── test_login.py      # Login test cases
+│   ├── chart/                 # Chart-related tests
+│   ├── market/                # Market data tests
+│   │   ├── symbol/            # Symbol management tests
+│   │   └── watchlist/         # Watchlist tests
+│   ├── trade/                 # Trading tests
+│   │   ├── market/            # Market order tests
+│   │   ├── order/             # Order management tests
+│   │   └── pending/           # Pending order tests
+│   └── user/                  # User management tests
+│       ├── account/           # Account settings tests
+│       ├── preference/        # User preference tests
+│       ├── setting/           # User setting tests
+│       └── statistics/        # User statistics tests
+├── conftest.py                # Global pytest configuration
+├── pytest.ini                 # Pytest settings
+├── requirements.txt           # Python dependencies
+└── GUIDANCE.md                # Development guidelines
+```
+
+### Key Components
+
+**Core Framework (`src/core/`)**
+- `request.py`: HTTP request handling with retry logic
+- `response.py`: Response validation methods (status, schema, payload)
+
+**API Clients (`src/routes/`)**
+- Organized by functional areas (auth, market, trade)
+- Each client handles specific API endpoints
+- Includes payload builders and response schemas
+
+**Utilities (`src/utils/`)**
+- `allure_utils.py`: Custom Allure reporting and attachments
+- `assert_utils.py`: Enhanced assertion methods
+- `logger_utils.py`: Structured logging with Allure integration
+
+**Test Organization (`tests/`)**
+- Mirrors API structure for easy navigation
+- Each module has dedicated `conftest.py` for fixtures
+- Test naming follows: `test_{type}_{TC_id}_{scenario}`
+
+## How to generate Allure report
+
+* Run via pytest command with Allure command
+
+    ```shell script
+    pytest tests --alluredir=allure-results
+    allure serve allure-results
+    ```
+  
+## [How to develop API test case](GUIDANCE.md)

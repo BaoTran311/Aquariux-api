@@ -15,7 +15,7 @@ from src.core.response import XResponse
 from src.data_runtime import DataRuntime
 from src.utils import Dotdict
 from src.utils.allure_utils import custom_log_info, custom_log_warning, delete_container_files, custom_allure_result, attach_request_response, \
-    format_request_response, custom_allure_title
+    format_request_response, custom_allure_title, attach_environment_properties
 from src.utils.datetime_utils import pretty_time, get_current_time
 from src.utils.logger_utils import setup_logging, logger
 
@@ -27,7 +27,8 @@ def pytest_addoption(parser):
     general.addoption("--debuglog", action="store_true", default=False)
     parser.addoption("--env", default="sit", help="Environment to run tests (sit, release_sit, uat)")
     parser.addoption("--client", default="lirunex", help="Client to run test (lirunex, transactCloud) - single value only")
-    parser.addoption("--account", default="demo", choices=["live", "demo", "crm"], help="Account type to run test (lirunex: crm/ demo, transactCloud: live/ demo)")
+    parser.addoption("--account", default="demo", choices=["live", "demo", "crm"],
+                     help="Account type to run test (lirunex: crm/ demo, transactCloud: live/ demo)")
     parser.addoption("--server", default="mt5", choices=["mt4", "mt5"], help="Server to run test on")
     parser.addoption("--user", help="Custom user used to run test")
     parser.addoption("--password", help="Raw custom password")
@@ -76,12 +77,14 @@ def pytest_runtest_setup(item: pytest.Item):
     print("\x00")
     allure.dynamic.parent_suite(DataRuntime.option.client.upper())
     allure.dynamic.suite(DataRuntime.option.server.upper())
+    allure.dynamic.sub_suite(item.nodeid.split("::")[0].split("/")[1].capitalize())
     item.name = custom_allure_title(item.name)
+    allure.dynamic.tag(f"user: {DataRuntime.config.user}")
 
 
 @pytest.hookimpl(tryfirst=True)
 def pytest_runtest_call(item: pytest.Item):
-    allure.dynamic.tag(f"user: {DataRuntime.config.user}")
+    ...
 
 
 @pytest.hookimpl(tryfirst=True)
@@ -133,9 +136,13 @@ def pytest_sessionfinish(session):
     if not allure_dir:
         return
 
+    # Attach environment properties
+    attach_environment_properties(allure_dir)
+
     # Delete container files
     delete_container_files(allure_dir)
 
+    # Custom allure result
     custom_allure_result(allure_dir)
 
 

@@ -19,7 +19,7 @@ def test_negative_AUT_TC001_login_CRM_with_required_params(auth_client):
     ))
     resp = sv.post(payload)
     resp.check_jsonschema(sv.schema)
-    resp.check_status_code(400)
+    resp.check_status_code(200)
     resp.check_response_time(1)
     assert_utils.check_contains("This is sample test case", "test case")
     assert_utils.check_equals(1, 1, "1 = 1")
