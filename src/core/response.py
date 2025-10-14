@@ -52,12 +52,10 @@ class XResponse:
         actual = math.ceil(self.time_in_second * multiple) / multiple
         method = self._resp.request.method
         url = self._resp.request.path_url
-        # msg = f"Verify response time in seconds ({actual}s < {max_timeout}s) [ {method} {url} ]"
         msg = f"Verify response time in seconds ({actual}s < {max_timeout}s)"
         time_unit = "s"
         if self.time_in_second < 1:
-            max_timeout = 0.5
-            # msg = f"Verify response time in milliseconds ({int(actual * 1000)}ms < {int(max_timeout * 1000)}ms) [ {method} {url} ]"
+            # max_timeout = 0.5
             msg = f"Verify response time in milliseconds ({int(actual * 1000)}ms < {int(max_timeout * 1000)}ms)"
             time_unit = "ms"
 
@@ -76,7 +74,10 @@ class XResponse:
             logger.info(f"{PASSED_ICON} {msg}")
         except jsonschema.ValidationError as e:
             logger.warning(f"{FAILED_ICON} {msg}")
-            logger.warning(f"  JSON schema validation failed: {e.message} [{'.'.join([item for item in e.path])}]")
+            error_msg = f"  JSON schema validation failed: {e.message} [{'.'.join([item for item in e.path])}]"
+            if not self._resp.json():
+                error_msg = "  JSON schema validation error: empty response received"
+            logger.warning(error_msg)
             soft_assert(False, msg)
 
 

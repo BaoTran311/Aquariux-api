@@ -12,7 +12,7 @@
 
 * Create and activate a virtual environment
     ```shell script
-    python -m venv .venv
+    python3 -m venv .venv
     # On Windows
     .venv\Scripts\activate
     # On Unix or MacOS
@@ -126,7 +126,6 @@ Aquariux-api/
 ├── conftest.py                # Global pytest configuration
 ├── pytest.ini                 # Pytest settings
 ├── requirements.txt           # Python dependencies
-└── GUIDANCE.md                # Development guidelines
 ```
 
 ### Key Components

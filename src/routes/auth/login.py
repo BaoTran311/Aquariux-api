@@ -26,12 +26,11 @@ class Login:
 
         return instance
 
-
     def __init__(self, headers=None):
         self.request = XRequest(headers)
 
     ### payload ###
-    def required_payload(self, user_id, password, source="WEB"):  # noqa
+    def required_payload(self, user_id="", password="", source="WEB"):  # noqa
         return dict(
             source=source.upper(),
             userId=user_id or DataRuntime.config.user,
@@ -51,10 +50,9 @@ class Login:
         self.request.headers |= dict(userId=user_id, authorization=f"Bearer {resp_data.result.token}")
         return self.request.headers
 
-
     ### schema ###
     @property
-    def schema(self):
+    def success_schema(self):
         return {
             "type": "object",
             "properties": {
@@ -128,5 +126,27 @@ class Login:
             "required": [
                 "code",
                 "result",
+            ]
+        }
+
+    @property
+    def error_schema(self):
+        return {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "debugMessage": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "code",
+                "message",
+                "debugMessage"
             ]
         }
