@@ -101,6 +101,10 @@ def pytest_runtest_makereport(item, call):
     if report.when == 'call':
         allure.dynamic.description_html(''.join(_loggingmsgs))
 
+def pytest_collection_modifyitems(config, items):
+    for item in items:
+        item.add_marker(item.originalname.split("_")[1])
+
 
 def pytest_runtest_logreport(report):
     if report.when == "call":

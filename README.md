@@ -147,7 +147,6 @@ Aquariux-api/
 **Test Organization (`tests/`)**
 - Mirrors API structure for easy navigation
 - Each module has dedicated `conftest.py` for fixtures
-- Test naming follows: `test_{type}_{TC_id}_{scenario}`
 
 ## How to generate Allure report
 
@@ -158,4 +157,4 @@ Aquariux-api/
     allure serve allure-results
     ```
   
-## [How to develop API test case](GUIDANCE.md)
+## [Guidelines for developing API test cases](GUIDANCE.md)
