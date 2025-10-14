@@ -1,14 +1,22 @@
 ### [Link test cases memberSite](https://docs.google.com/spreadsheets/d/1Ck8AvaeEnlfGmuc242Oc1PBm9meh3i2UYOgTk48Jgvg/edit?gid=0#gid=0)
 
-## How to develop test script
+## Agenda
+- Naming convention
+- Test coverage
+- Mandatory checkpoints
+- Payload validation
+- Json schema
+
+
+## How to develop test cases
 - Test Naming Convention: 
   - **test_type** → indicates the test category  
     (should be one of the values `positive`, `negative`, `integration`)  
   - **TC_id** → unique test case identifier  
     (e.g., `AUT_TC001`, `TRD_MRK_TC002`)  
   - **test_scenario** → short description of what the test does  
-    (e.g., `login_with_valid_CRM_credentials`)  
-  - **test_positive_TRD_MRK_TC001_login_with_valid_CRM_credentials**
+    (e.g., `login_using_valid_CRM_credential_with_required_params`)  
+  - **test_positive_AUTH_TC001_login_using_valid_CRM_credential_with_required_params**
 - Test Coverage
   - Positive: valid payload/params validation
   
@@ -68,7 +76,7 @@
   `resp.check_payload_equals('WEB', key="result.token.user.source")`
 
 ## What is JSON Schema (Important)
-  - JSON Schema that describes the structure of JSON data — it defines:
+  - JSON Schema that describes the structure of response data — it defines:
     - Which fields the data must include
     - The data type of each field (string, number, boolean, etc.), and
     - The validation rules that apply to those fields.
