@@ -16,7 +16,7 @@ line_spacing_info = "margin: 0 0 0.5em 0;"
 
 
 def custom_log_info(_logmsgs):
-    _logmsgs_checking = "verify check".split()
+    _logmsgs_checking = "verify check".split() + ["equals", "contains", "less", "greater", "end"]
     if any(_msgs in _logmsgs.lower() for _msgs in _logmsgs_checking):
         result = f'<pre style="color:green;{line_spacing_info}">{_logmsgs}</pre>'
     else:
@@ -25,7 +25,7 @@ def custom_log_info(_logmsgs):
             method = match.group(1).strip()
             json_data = extract_json_objects(_tmplog)[-1]
             result = f"""
-                <pre style="{line_spacing_info}">{method}{truncate_json(json.dumps(json.loads(json_data)))}</pre>
+                <pre style="color:green;{line_spacing_info}">{method}{truncate_json(json.dumps(json.loads(json_data)))}</pre>
             """
         else:
             if any(x in _logmsgs.lower() for x in ("step", "steps")):
@@ -84,7 +84,7 @@ def attach_request_response(resp: XResponse, **kwargs):
                                             resize: both; overflow: auto;">{response_json}</pre>
             </div>
             """
-    name = f"{kwargs.get("request_time")} | [{resp.request.method}] {resp.request.path_url}"
+    name = f"{kwargs.get("request_time")} - {resp.request.method} {resp.request.path_url}"
     if kwargs.get("html"):
         allure.attach(
             body,
@@ -153,7 +153,7 @@ def custom_allure_result(allure_dir):
 def attach_environment_properties(allure_dir):
     env_data = {
         "Environment": DataRuntime.option.env.capitalize(),
-        "Account": "Live/Crm" if DataRuntime.option.account != "demo" else DataRuntime.option.account.capitalize(),
+        "Account": "Live/Crm" if not DataRuntime.is_demo() else DataRuntime.option.account.capitalize(),
     }
 
     with open(f"{allure_dir}/environment.properties", "w") as f:
