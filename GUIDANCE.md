@@ -45,7 +45,7 @@
     - 7/ GET /trade/order/detail -> to verify delete success
 - Mandatory Checkpoints
   - `resp.check_status_code(<expected status code>)` → (e.g., `resp.check_status_code(200)`)
-  - `resp.check_response_time(<expected response time>)` → (e.g., `resp.check_response_time(0.5)`)
+  - `resp.check_response_time(<expected response time>)` → (e.g., `resp.check_response_time(3)`)
   - `resp.check_jsonschema(<expected schema>)` → (e.g., `resp.check_jsonschema(schema)`)
 - Payload Validation Methods
   
@@ -78,7 +78,7 @@
 ## What is JSON Schema (Important)
   - JSON Schema that describes the structure of response data — it defines:
     - Which fields the data must include
-    - The data type of each field (string, number, boolean, etc.), and
+    - The data type of each field (string, number, boolean, etc.)
     - The validation rules that apply to those fields.
   - Ex:
     
@@ -98,10 +98,10 @@
           "properties": {
             "id": { "type": "integer" },
             "name": { "type": "string" },
-            "email": { "type": "string", "format": "email" },
+            "email": { "type": ["string", "null"], "format": "email" },
             "is_active": { "type": "boolean" }
           },
           "required": ["id", "name", "email"]
         }
       ```
-   - [Link generate json schema](https://transform.tools/json-to-json-schema)
+   - [Link generate json schema](https://www.lddgo.net/en/string/generate-json-schema)

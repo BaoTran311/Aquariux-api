@@ -80,7 +80,6 @@ class XResponse:
             logger.warning(error_msg)
             soft_assert(False, msg)
 
-
     def __check_payload__(self, expected, *, key=None, ops, method):
         msg = "Verify payload"
         if key:

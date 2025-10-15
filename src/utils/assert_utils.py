@@ -33,7 +33,7 @@ def __check_data__(actual, expected, message="", op_func=lambda a, b: a == b, me
     if not message:
         message = f"{actual!r} {method} {expected!r}"
 
-    if not message.startswith(("verify", "check")):
+    if not message.lower().startswith(("verify", "check")):
         message = f"Verify {message}"
 
     res = op_func(actual, expected)

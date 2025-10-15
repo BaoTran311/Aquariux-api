@@ -4,32 +4,48 @@ from src.data_runtime import DataRuntime
 from src.enums.system import Clients, AccountType
 from src.utils import Dotdict
 
+url_map = Dotdict({
+    Clients.LIRUNEX: {
+        AccountType.CRM: "/auth/v1/company/login",
+        AccountType.LIVE: "/auth/v2/company/live/login",
+        AccountType.DEMO: "/auth/v2/company/demo/login"
+    },
+    Clients.TRANSACTCLOUD: {
+        AccountType.LIVE: "/auth/v2/metatrader5/live/login",
+        AccountType.DEMO: "/auth/v2/metatrader5/demo/login"
+    }
+})
+
 
 class Login:
     def __new__(cls, headers=None, *args, **kwargs):
         instance = super().__new__(cls)
-        url_map = Dotdict({
-            Clients.LIRUNEX: {
-                AccountType.CRM: "/auth/v1/company/login",
-                AccountType.LIVE: "/auth/v2/company/live/login",
-                AccountType.DEMO: "/auth/v2/company/demo/login"
-            },
-            Clients.TRANSACTCLOUD: {
-                AccountType.LIVE: "/auth/v2/metatrader5/live/login",
-                AccountType.DEMO: "/auth/v2/metatrader5/demo/login"
-            }
-        })
+        # url_map = Dotdict({
+        #     Clients.LIRUNEX: {
+        #         AccountType.CRM: "/auth/v1/company/login",
+        #         AccountType.LIVE: "/auth/v2/company/live/login",
+        #         AccountType.DEMO: "/auth/v2/company/demo/login"
+        #     },
+        #     Clients.TRANSACTCLOUD: {
+        #         AccountType.LIVE: "/auth/v2/metatrader5/live/login",
+        #         AccountType.DEMO: "/auth/v2/metatrader5/demo/login"
+        #     }
+        # })
 
         # select url based on client + handle external client
         default_client = Clients.LIRUNEX if DataRuntime.option.client in MULTI_OMS_CLIENTS else Clients.TRANSACTCLOUD
-        instance.url = url_map.get(DataRuntime.config.client, url_map[default_client])[DataRuntime.option.account]
+        instance.login_url = url_map.get(DataRuntime.config.client, url_map[default_client])[DataRuntime.option.account]
 
         return instance
 
     def __init__(self, headers=None):
         self.request = XRequest(headers)
+        self.live_url = url_map.get(DataRuntime.option.client)[AccountType.LIVE]
+        self.demo_url = url_map.get(DataRuntime.option.client)[AccountType.DEMO]
 
-    ### payload ###
+    ###########
+    # PAYLOAD #
+    ###########
     def required_payload(self, user_id="", password="", source="WEB"):  # noqa
         return dict(
             source=source.upper(),
@@ -37,9 +53,11 @@ class Login:
             password=password or DataRuntime.config.password
         )
 
-    ### method ###
+    ##########
+    # METHOD #
+    ##########
     def post(self, payload, **kwargs):
-        resp = self.request.post(self.url, payload, **kwargs)
+        resp = self.request.post(self.login_url, payload, **kwargs)
         return resp
 
     def authenticate(self, user_id=None, password=None, source="WEB"):
@@ -50,7 +68,9 @@ class Login:
         self.request.headers |= dict(userId=user_id, authorization=f"Bearer {resp_data.result.token}")
         return self.request.headers
 
-    ### schema ###
+    ##########
+    # SCHEMA #
+    ##########
     @property
     def success_schema(self):
         return {

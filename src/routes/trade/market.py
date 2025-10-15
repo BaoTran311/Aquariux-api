@@ -8,6 +8,7 @@ class Market:
         self.market_url = "/trade/v2/market"
         self.general_url = "/trade/v2"
         self.bulk_url = "/trade/v1/bulk"
+        self.symbols_all_url = "/market/v1/symbols/all"
 
     ###########
     # PAYLOAD #
@@ -127,6 +128,10 @@ class Market:
 
     def put_bulk(self, payload, **kwargs):
         resp = self.request.put(self.bulk_url, payload, **kwargs)
+        return resp
+
+    def get_all_symbols(self, **kwargs):
+        resp = self.request.get(self.symbols_all_url, **kwargs)
         return resp
 
     ##########

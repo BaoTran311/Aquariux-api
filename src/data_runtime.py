@@ -16,3 +16,11 @@ class DataRuntime:
     @classmethod
     def is_crm(cls):
         cls.option.account.lower() == "crm"  # noqa
+
+    @classmethod
+    def is_mt4(cls):
+        return cls.option.server == "mt4"
+
+    @classmethod
+    def is_mt5(cls):
+        return cls.option.server == "mt5"
